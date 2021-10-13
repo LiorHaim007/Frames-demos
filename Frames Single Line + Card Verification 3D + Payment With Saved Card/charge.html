@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.checkout.com/js/framesv2.min.js"></script>
+    <h1>Card verification completed.</h1>
+    <p> SRC id is:</p>
+
+    <form id="payment-form" method="POST" action="./server2.php">
+        <div class="one-liner">
+            <!-- add submit button -->
+            <button id="pay-button">
+                Book now
+            </button>
+        </div>
+        <p class="success-payment-message"></p>
+    </form>
+</body>
+
+<script>
+    var payButton = document.getElementById("pay-button");
+    var form = document.getElementById("payment-form");
+
+    Frames.init("pk_test_792dfa6f-91d1-4ba0-89c0-b89a23ae44d2");
+
+    Frames.addEventHandler(
+        Frames.Events.CARD_VALIDATION_CHANGED,
+        function (event) {
+            console.log("CARD_VALIDATION_CHANGED: %o", event);
+
+            payButton.disabled = !Frames.isCardValid();
+        }
+    );
+
+    Frames.addEventHandler(
+        Frames.Events.CARD_TOKENIZED,
+        function (event) {
+            Frames.addCardToken(form, event.token);
+            form.submit();
+        }
+    );
+
+    form.addEventListener("submit", function (event) {
+        payButton.disabled = true // disables pay button once submitted
+        event.preventDefault();
+        Frames.submitCard();
+    });
+</script>
+
+</html>
